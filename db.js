@@ -10,7 +10,7 @@ const friends = [
         skill: 'Cannot find stairs on captcha'
     },
     {
-        name: 'mac',
+        name: 'Macintosh',
         handle: '@mac',
         skill: 'Favorite fruit is apples'
     },

@@ -1,26 +1,52 @@
 const http = require("http");
 const express = require("express");
 const db = require("./db");
+const es6Renderer = require("express-es6-template-engine");
 
 const hostname = "127.0.0.1";
 const port = 3000;
 
 const app = express();
 
+app.engine("html", es6Renderer); //register html template engine
+app.set("views", "templates"); //look for templates in template folder
+app.set("view engine", "html"); //user the html engine for view rendering
+
 
 const server = http.createServer(app);
 
 app.get("/", (req, res) => {
-    res.send('Hello World!');
+    res.render("home", {
+        locals: {
+            title: "Home"
+        },
+        partials: {
+            head: "/partials/head"
+        }
+    });
 });
 
 app.get("/about", (req, res) => {
-    res.send('About page');
+    res.render('about', {
+        locals: {
+            title: "About"
+        },
+        partials: {
+            head: "/partials/head"
+        }
+    });
 });
 
 
 app.get("/contact", (req, res) => {
-    res.send('Contact page');
+    res.render('contact', {
+        locals: {
+            title: "Contact"
+        },
+        partials: {
+            head: "/partials/head"
+        }
+    });
 });
 
 app.get("/friends", (req, res) => {
@@ -29,7 +55,15 @@ app.get("/friends", (req, res) => {
         html += `<li>${friend.name}</li>`
     })
 
-    res.send(html);
+    res.render("friends", {
+        locals: {
+            title: "Andres's Friends",
+            friends: db
+        },
+        partials: {
+            head: "/partials/head"
+        }
+    });
 });
 
 app.get("/friends/:handle", (req, res) => {
@@ -42,10 +76,15 @@ app.get("/friends/:handle", (req, res) => {
     })
 
     if (foundFriend) {
-        let html = `<h1>${foundFriend.name}</h1>`
-        html += `<h2>${foundFriend.handle}</h2>`
-        html += `<p>${foundFriend.skill}</p>`
-        res.send(html);
+        res.render("friendSingle", {
+            locals: {
+                title: "Friends",
+                friend: foundFriend
+            },
+            partials: {
+                head: "/partials/head"
+            }
+        });
     } else {
         res.status(404);
         res.send("Could not find user with that handle")
